@@ -1,0 +1,1 @@
+grpcui -plaintext -import-path ./ -proto protofile/grpc/version.proto -proto protofile/grpc/resource.proto localhost:9090

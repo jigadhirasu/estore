@@ -1,0 +1,44 @@
+{{- range .Values.ingressroute }}
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ .name }}
+spec:
+  entryPoints:
+    - websecure
+  tls:
+    certResolver: {{ .certResolver }}
+    domains:
+    - main: "{{ .domain }}"
+  routes:
+  - match: Host(`{{ .domain }}`)
+    kind: Rule
+    services:
+    - name: {{ .service }}
+      port: {{ .port | default 80 }}
+{{- end }}
+
+
+{{- $ingressTCP := .Values.ingressTCP }}
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRouteTCP
+metadata:
+  name: tcp-{{ $ingressTCP.name }}
+spec:
+  entryPoints:
+    - grpc
+  tls:
+    certResolver: {{ $ingressTCP.certResolver }}
+    domains:
+      - main: "{{ $ingressTCP.domain }}"
+        sans: 
+          - "*.{{ $ingressTCP.domain }}"
+  routes:
+    {{- range $ingressTCP.routes }}
+    - match: HostSNI(`{{ .domain }}`)
+      services:
+        - name: {{ .service }}
+          port: {{ .port | default 9090 }}
+    {{- end }}

@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package version;
+
+option go_package = "github.com/jigadhirasu/estore/protoc/versionpb";
+
+import "google/protobuf/timestamp.proto";
+
+// 服務版本資訊系統
+service Version {
+  rpc GetVersion(GetVersionRequest) returns (GetVersionResponse) {}
+}
+
+message GetVersionRequest {}
+
+message GetVersionResponse {
+  string version = 1;
+  google.protobuf.Timestamp current_time = 2;
+}

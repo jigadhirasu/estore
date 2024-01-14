@@ -1,0 +1,44 @@
+{{- $deployment := .Values.deployment }}
+{{- range $deployment }}
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: asgame-hpa-{{ .name }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .name }}
+  minReplicas: 1
+  maxReplicas: 10
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      selectPolicy: Min
+      policies:
+      - type: Percent
+        value: 100
+        periodSeconds: 100
+      - type: Pods
+        value: 3
+        periodSeconds: 30
+    scaleUp:
+      stabilizationWindowSeconds: 60
+      selectPolicy: Max
+      # 30 秒內最多會開 一倍或3個
+      policies:
+      - type: Percent
+        value: 100
+        periodSeconds: 30
+      - type: Pods
+        value: 3
+        periodSeconds: 30
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 80
+{{- end }}

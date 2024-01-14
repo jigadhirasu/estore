@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package filesystem;
+
+option go_package = "github.com/jigadhirasu/estore/protoc/filesystempb";
+
+import "protofile/proto/types/error.proto";
+
+message MkdirRequest {
+  string path = 1;
+  string name = 2;
+}
+
+message MkdirResponse { types.Error error = 1; }

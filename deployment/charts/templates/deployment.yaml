@@ -1,0 +1,90 @@
+{{- $release := .Release }}
+{{- $gin := .Values.gin }}
+{{- $mariadb := .Values.mariadb }}
+{{- $redis := .Values.redis }}
+{{- $gcr := .Values.gcr }}
+{{- $deployment := .Values.deployment }}
+{{- $volumes := .Values.volumes }}
+{{- $image := .Values.image }}
+{{- $resource :=  .Values.resource }}
+{{- range $deployment }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .name }}
+spec:
+  replicas: {{ .replica | default 1 }}
+  selector:
+    matchLabels:
+      app: {{ .name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .name }}
+    spec:
+      nodeSelector:
+      {{- range $key, $val := .nodeSelector }}
+        {{ $key }}: {{ $val }}
+      {{- end }}
+      # terminationGracePeriodSeconds: 60
+      volumes:
+        {{- range $volumes  }}
+        - name: {{ .name }}
+          persistentVolumeClaim:
+            claimName: {{ .name }}
+        {{- end }}      
+      containers:
+      - env:
+        - name: Namespace
+          value: "{{ $release.Namespace }}"
+        - name: Revision
+          value: "{{ $release.Revision }}"
+        - name: GIN_MODE
+          value: "{{ $gin.mode }}"
+        - name: MARIADB_HOST
+          value: "{{ $mariadb.host }}"
+        - name: MARIADB_USER
+          value: "{{ $mariadb.user }}"
+        - name: MARIADB_PASS
+          value: "{{ $mariadb.pass }}"
+        - name: PREFIX_DBNAME
+          value: "{{ $mariadb.prefix }}"
+        - name: MARIADB_MAX_IDLE
+          value: "{{ $mariadb.maxidle }}"
+        - name: MARIADB_MAX_OPEN
+          value: "{{ $mariadb.maxopen }}"
+        - name: REDIS_ADDR
+          value: "{{ $redis.addr }}"
+        - name: REDIS_PASS
+          value: "{{ $redis.pass }}"
+        - name: REDIS_DB
+          value: "{{ $redis.db }}"
+        - name: RESOURCE_ROOT
+          value: "{{ $resource.root }}"
+        - name: RESOURCE_Host
+          value: "{{ $resource.host }}"
+        - name: HTTP_PORT
+          value: "{{ .httpPort | default 80 }}"
+        - name: GRPC_PORT
+          value: "{{ .grpcPort | default 9090 }}"
+        {{- range $key, $val := .env }}
+        - name: {{ $key }}
+          value: "{{ $val }}"  
+        {{- end }}
+        volumeMounts:
+        {{- range .volumeMounts }}
+        - name: {{ .name }}
+          mountPath: "{{ .mountPath }}"
+        {{- end }}        
+        resources:
+          limits:
+            cpu: 1
+            memory: 1Gi 
+          requests:
+            cpu: 100m
+            memory: 320Mi
+        name: {{ .name }}
+        image: {{ .image | default $image }}
+        command: ["{{ .name }}"]
+{{- end }}

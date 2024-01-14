@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hello</title>
+  </head>
+  <body>
+    <input type="file" id="input" />
+    <button id="submit">送出</button>
+
+    <div style="height: 400px; width: 600px; display: grid; margin: 10px">
+      <textarea id="dataurl"></textarea>
+    </div>
+  </body>
+  <script>
+    const input = document.querySelector("#input");
+    const button = document.querySelector("#submit");
+    const dataurl = document.querySelector("#dataurl");
+
+    button.addEventListener("click", () => {
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.addEventListener("load", () => {
+        dataurl.innerHTML = reader.result;
+      });
+    });
+  </script>
+</html>

@@ -1,0 +1,50 @@
+mariadb:
+  host: host.docker.internal:14000
+  user: estore
+  pass: password
+  prefix: e
+  dbname: store
+  maxidle: 4
+  maxopen: 8
+
+redis:
+  addr: host.docker.internal:6379
+  pass: ""
+  db: 0
+
+resource:
+  host: https://estore.rex.baby
+  root: /src
+
+image: jigadhirasu/estore-main
+
+deployment:
+  - name: fs
+    volumeMounts:
+      - name: fs-pvc
+        mountPath: /src
+
+volumes:
+  - name: fs-pvc
+    storageClassName: storage-src
+
+service:
+  - name: fs
+    httpPort: 80
+    httpTargetPort: 80
+    grpcPort: 9090
+    grpcTargetPort: 9090
+
+ingressroute:
+  - certResolver: cf
+    name: fs
+    domain: file.rex.baby
+    service: fs
+
+ingressTCP:
+  name: estore
+  domain: rex.baby
+  certResolver: cf
+  routes:
+    - domain: grpc.rex.baby
+      service: fs

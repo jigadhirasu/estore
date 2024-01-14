@@ -1,0 +1,105 @@
+---
+{
+   "kind": "pipeline",
+   "name": "main",
+   "platform": {
+      "arch": "amd64",
+      "os": "linux"
+   },
+   "services": [
+      {
+         "environment": {
+            "MYSQL_ALLOW_EMPTY_PASSWORD": "yes"
+         },
+         "image": "mariadb",
+         "name": "mariadb"
+      }
+   ],
+   "steps": [
+      {
+         "commands": [
+            "while ! mysqladmin ping -h mariadb -u root --silent; do sleep 1; done",
+            "mysql -h mariadb -u root -e \"CREATE USER 'estore'@'%' IDENTIFIED BY 'password';\"",
+            "mysql -h mariadb -u root -e \"GRANT ALTER, CREATE, CREATE VIEW, DELETE, DROP, INDEX, INSERT, SELECT, SHOW VIEW, UPDATE ON *.* TO 'estore'@'%' IDENTIFIED BY 'password';\""
+         ],
+         "image": "mysql",
+         "name": "mysql-health-check"
+      },
+      {
+         "commands": [
+            "printenv | grep MARIADB",
+            "go run cmd/auto_migrate/main.go",
+            "go test -v ./..."
+         ],
+         "environment": {
+            "DBNAME": "store",
+            "GRPC_PORT": "8090",
+            "HTTP_PORT": "8080",
+            "MARIADB_HOST": "mariadb",
+            "MARIADB_PASS": "password",
+            "MARIADB_USER": "estore",
+            "MIGRATE_FOLDER": "file://migrate",
+            "PREFIX_DBNAME": "e",
+            "REDIS_ADDR": "redis",
+            "REDIS_DB": "0",
+            "RESOURCE_HOST": "http://localhost:8080",
+            "RESOURCE_ROOT": "/src"
+         },
+         "image": "golang",
+         "name": "testing-main"
+      },
+      {
+         "commands": [
+            "CGO_ENABLED=0 GOOS=linux GORACH=amd64 go build -o fs ./cmd/fs"
+         ],
+         "image": "golang",
+         "name": "builder-main"
+      },
+      {
+         "image": "plugins/docker",
+         "name": "publish-main",
+         "settings": {
+            "dockerfile": "deployment/docker/all.Dockerfile",
+            "password": {
+               "from_secret": "docker_password"
+            },
+            "repo": "jigadhirasu/estore-main",
+            "tags": [
+               "latest"
+            ],
+            "username": {
+               "from_secret": "docker_username"
+            }
+         }
+      },
+      {
+         "image": "pelotech/drone-helm3",
+         "name": "helm-main",
+         "settings": {
+            "api_server": {
+               "from_secret": "host"
+            },
+            "chart": "./deployment/charts",
+            "kube_certificate": {
+               "from_secret": "ca"
+            },
+            "kube_service_account": {
+               "from_secret": "account"
+            },
+            "kube_token": {
+               "from_secret": "token"
+            },
+            "mode": "upgrade",
+            "namespace": "main",
+            "release": "estore",
+            "values_files": "./deployment/charts/main.yaml"
+         }
+      }
+   ],
+   "trigger": {
+      "branch": [
+         "main"
+      ]
+   },
+   "type": "kubernetes"
+}
