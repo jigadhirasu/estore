@@ -1,8 +1,0 @@
-syntax = "proto3";
-
-package ding4.v1;
-
-option go_package = "github.com/jigadhirasu/estore/protoc/logisticspb";
-
-// 物流配送系統
-service Logistics {}

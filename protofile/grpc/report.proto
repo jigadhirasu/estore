@@ -1,9 +1,0 @@
-syntax = "proto3";
-
-package ding4.v1;
-
-option go_package = "github.com/jigadhirasu/estore/protoc/platformpb";
-
-// 報表管理系統
-// 儀表盤數據
-service Report {}
