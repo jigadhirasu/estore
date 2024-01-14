@@ -50,7 +50,7 @@ local Testing(branch,) = {
     environment: Environment,
     commands: [
         "printenv | grep MARIADB",
-        "go run cmd/auto_migrate/main.go",
+        "go run cmd/auto-migrate/main.go",
         "go test -v ./...",
     ],
 };
