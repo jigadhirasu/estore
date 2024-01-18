@@ -1,6 +1,8 @@
 package util
 
-import "github.com/jigadhirasu/rex"
+import (
+	"github.com/jigadhirasu/rex"
+)
 
 func ReduceSlice[A any](b []A, a A) []A {
 	if b == nil {

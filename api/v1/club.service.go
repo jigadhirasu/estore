@@ -2,8 +2,11 @@ package v1
 
 import (
 	"context"
+	"estore/internal/club"
+	"estore/internal/mariadb"
 	"estore/protoc/clubpb"
 
+	"github.com/jigadhirasu/rex"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -17,14 +20,44 @@ func (ClubService) Ping(ctx context.Context, req *clubpb.PingPong) (*clubpb.Ping
 	return req, nil
 }
 
-func (ClubService) CreateClub(ctx context.Context, req *clubpb.CreateClubRequest) (*clubpb.CreateClubResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateClub not implemented")
+func (ClubService) CreateClub(cin context.Context, req *clubpb.CreateClubRequest) (*clubpb.CreateClubResponse, error) {
+	dbname := "test"
+
+	ctx := rex.NewContext(cin)
+
+	pipe := rex.Pipe4(
+		rex.Once(mariadb.F0GetDB[*clubpb.Club](dbname)),
+		rex.Once(mariadb.F0Begin[*clubpb.Club](dbname)),
+		club.PipeCreateClub(mariadb.TxKey(dbname)),
+		rex.Tap(mariadb.F0Commit[*clubpb.CreateClubResponse](dbname)),
+	)(rex.From(req.Data...))(ctx)
+
+	defer mariadb.Rollback(ctx, dbname)
+
+	item := <-pipe()
+
+	return item()
+
 }
 func (ClubService) UpdateClub(ctx context.Context, req *clubpb.UpdateClubRequest) (*clubpb.UpdateClubResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateClub not implemented")
 }
-func (ClubService) FindCluib(ctx context.Context, req *clubpb.FindClubRequest) (*clubpb.FindClubResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method FindCluib not implemented")
+func (ClubService) FindClub(cin context.Context, req *clubpb.FindClubRequest) (*clubpb.FindClubResponse, error) {
+
+	dbname := "test"
+
+	ctx := rex.NewContext(cin)
+
+	pipe := rex.Pipe2(
+		rex.Once(mariadb.F0GetDB[*clubpb.FindClubRequest](dbname)),
+		club.PipeFindClub(mariadb.DBKey(dbname)),
+	)(rex.From(req))(ctx)
+
+	defer mariadb.Rollback(ctx, dbname)
+
+	item := <-pipe()
+
+	return item()
 }
 func (ClubService) CreateRank(ctx context.Context, req *clubpb.CreateRankRequest) (*clubpb.CreateRankResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateRank not implemented")
