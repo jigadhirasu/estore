@@ -3,7 +3,6 @@ package fs
 import (
 	"estore/internal/mariadb"
 	"estore/internal/models/filemap"
-	"estore/internal/util"
 	"estore/protoc/fspb"
 	"estore/protoc/typepb"
 
@@ -12,11 +11,12 @@ import (
 )
 
 func PipeCreateFile(dbKey string, clauses ...clause.Expression) rex.PipeLine[*fspb.Dir, *fspb.CreateOrUpdateDirFileResponse] {
-	return rex.Pipe6(
+	return rex.Pipe7(
 		rex.Map(F1ResourceRoot),
 		rex.MergeMap[*fspb.Dir, *fspb.File](H1ExpandCreateFile),
 		rex.Map(F1MkdirAndSaveFile),
-		rex.Reduce(util.ReduceSliceFunc(T1FileToFilestore)),
+		rex.Map(F1FileToFilestore),
+		rex.ReduceSlice[filemap.FileStore](),
 		rex.Map(mariadb.F1Insert[[]filemap.FileStore](dbKey, clauses...)),
 		rex.Map[int64, *fspb.CreateOrUpdateDirFileResponse](func(ctx rex.Context, a int64) (*fspb.CreateOrUpdateDirFileResponse, error) {
 			return &fspb.CreateOrUpdateDirFileResponse{

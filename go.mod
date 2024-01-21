@@ -8,7 +8,7 @@ require (
 	github.com/golang-migrate/migrate/v4 v4.17.0
 	github.com/google/uuid v1.4.0
 	github.com/improbable-eng/grpc-web v0.15.0
-	github.com/jigadhirasu/rex v0.0.11
+	github.com/jigadhirasu/rex v0.0.12
 	github.com/joho/godotenv v1.5.1
 	github.com/open-policy-agent/opa v0.53.0
 	github.com/vincent-petithory/dataurl v1.0.0

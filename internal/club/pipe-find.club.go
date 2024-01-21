@@ -12,10 +12,11 @@ import (
 )
 
 func PipeFindClub(dbKey string, clauses ...clause.Expression) rex.PipeLine[*clubpb.FindClubRequest, *clubpb.FindClubResponse] {
-	return rex.Pipe4(
+	return rex.Pipe5(
 		rex.Map(T1BuildFindCondition),
 		rex.MergeMap(mariadb.H1Find[club.Club](dbKey)),
-		rex.Reduce(util.ReduceSliceFunc(T1ModelToProto)),
+		rex.Map(F1ModelToProto),
+		rex.ReduceSlice[*clubpb.Club](),
 		rex.Map[[]*clubpb.Club, *clubpb.FindClubResponse](func(ctx rex.Context, a []*clubpb.Club) (*clubpb.FindClubResponse, error) {
 			return &clubpb.FindClubResponse{
 				Data: a,
