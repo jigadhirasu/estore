@@ -2,17 +2,24 @@ package main
 
 import (
 	"context"
+	"estore/configs"
 	"estore/internal/mariadb"
 	"estore/internal/models/club"
 	"estore/internal/models/filemap"
+	"estore/internal/models/rank"
 
 	"github.com/jigadhirasu/rex"
 )
 
 var autoMigrateTable = []mariadb.Table{
 	&club.Club{},
+	&rank.Rank{},
 	&filemap.FileMap{},
 	filemap.FileStore{},
+}
+
+func init() {
+	configs.Develop()
 }
 
 func main() {

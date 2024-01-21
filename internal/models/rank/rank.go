@@ -14,7 +14,7 @@ type Rank struct {
 	Club       string           `gorm:"type:varchar(40);not null"`
 	Name       string           `gorm:"type:varchar(40);not null"`
 	Conditions types.Conditions `gorm:"type:json;not null"`
-	Prioid     int32            `gorm:"type:tinyint;not null"`
+	Priority   int32            `gorm:"type:tinyint;not null"`
 	CreatedAt  time.Time        `gorm:"type:timestamp;default:CURRENT_TIMESTAMP;index:created_at;not null"`
 }
 
