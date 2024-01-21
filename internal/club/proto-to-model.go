@@ -8,12 +8,19 @@ import (
 	"github.com/jigadhirasu/rex"
 )
 
-func T1CloubProtoToModel(a *clubpb.Club) club.Club {
-	return club.Club{
-		UUID: uuid.NewString(),
+func T1ProtoToModel(a *clubpb.Club) club.Club {
+
+	m := club.Club{
+		UUID: a.Id,
 		Name: a.Name,
 	}
+
+	if m.UUID == "" {
+		m.UUID = uuid.NewString()
+	}
+
+	return m
 }
-func F1CloubProtoToModel(ctx rex.Context, a *clubpb.Club) (club.Club, error) {
-	return T1CloubProtoToModel(a), nil
+func F1ProtoToModel(ctx rex.Context, a *clubpb.Club) (club.Club, error) {
+	return T1ProtoToModel(a), nil
 }

@@ -14,3 +14,11 @@ func F0CheckNameIsValid(ctx rex.Context, a *clubpb.Club) error {
 
 	return nil
 }
+
+func F0CheckIdIsValid(ctx rex.Context, a *clubpb.Club) error {
+	if a.Id == "" {
+		return errors.New("club uuid is empty")
+	}
+
+	return nil
+}
