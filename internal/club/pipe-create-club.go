@@ -3,6 +3,7 @@ package club
 import (
 	"estore/internal/mariadb"
 	"estore/internal/models/club"
+	validate "estore/internal/validdate"
 	"estore/protoc/clubpb"
 	"estore/protoc/typepb"
 
@@ -12,7 +13,7 @@ import (
 
 func PipeCreateClub(dbKey string, clauses ...clause.Expression) rex.PipeLine[*clubpb.Club, *clubpb.CreateClubResponse] {
 	return rex.Pipe5(
-		rex.Tap[*clubpb.Club](F0CheckNameIsValid),
+		rex.Tap[*clubpb.Club](validate.IsNameValid),
 		rex.Map(F1ProtoToModel),
 		rex.ReduceSlice[club.Club](),
 		rex.Map(mariadb.F1Insert[[]club.Club](dbKey, clauses...)),

@@ -3,6 +3,7 @@ package rank
 import (
 	"estore/internal/mariadb"
 	"estore/internal/models/rank"
+	validate "estore/internal/validdate"
 	"estore/protoc/clubpb"
 	"estore/protoc/typepb"
 
@@ -12,9 +13,9 @@ import (
 
 func PipeUpdateRank(dbKey string, clauses ...clause.Expression) rex.PipeLine[*clubpb.Rank, *clubpb.UpdateRankResponse] {
 	return rex.Pipe7(
-		rex.Tap[*clubpb.Rank](F0CheckIdIsValid),
-		rex.Tap[*clubpb.Rank](F0CheckIdIsValid),
-		rex.Tap[*clubpb.Rank](F0CheckNameIsValid),
+		rex.Tap[*clubpb.Rank](validate.IsIdValid),
+		rex.Tap[*clubpb.Rank](validate.IsNameValid),
+		rex.Tap[*clubpb.Rank](IsConditionValid),
 		rex.Map(F1ProtoToModel),
 		rex.Map(mariadb.F1Update[rank.Rank](dbKey, clauses...)),
 		rex.Reduce[int64, int64](func(a, b int64) int64 {
