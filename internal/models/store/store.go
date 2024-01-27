@@ -12,7 +12,7 @@ type Store struct {
 	ClubID     string    `gorm:"type:varchar(40);not null"`
 	Storehouse string    `gorm:"type:varchar(40);not null"`
 	Currency   int32     `gorm:"type:tinyint;not null"`
-	CreatedAt  string    `gorm:"type:timestamp;default:CURRENT_TIMESTAMP;index:created_at;not null"`
+	CreatedAt  string    `gorm:"->;type:timestamp;default:CURRENT_TIMESTAMP;index:created_at;not null"`
 	Info       StoreInfo `gorm:"not null"`
 }
 

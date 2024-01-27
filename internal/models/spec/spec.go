@@ -16,7 +16,7 @@ type Spec struct {
 	Volume      int32       `gorm:"type:smallint;not null"`
 	Weight      int32       `gorm:"type:smallint;not null"`
 	Label       types.Label `gorm:"type:json;not null"`
-	CreatedAt   time.Time   `gorm:"type:timestamp;default:CURRENT_TIMESTAMP;index:created_at;not null"`
+	CreatedAt   time.Time   `gorm:"->;type:timestamp;default:CURRENT_TIMESTAMP;index:created_at;not null"`
 }
 
 func (m Spec) TableName() string {

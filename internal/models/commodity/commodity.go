@@ -16,7 +16,7 @@ type Commodity struct {
 	State     int32       `gorm:"type:tinyint;not null"`
 	Cost      float64     `gorm:"type:double;not null"`
 	Label     types.Label `gorm:"type:json;not null"`
-	CreatedAt time.Time   `gorm:"type:timestamp;default:CURRENT_TIMESTAMP;index:created_at;not null"`
+	CreatedAt time.Time   `gorm:"->;type:timestamp;default:CURRENT_TIMESTAMP;index:created_at;not null"`
 }
 
 func (m Commodity) TableName() string {

@@ -12,7 +12,7 @@ func TableName() string {
 type Club struct {
 	UUID      string    `gorm:"type:varchar(40);primaryKey;not null"`
 	Name      string    `gorm:"type:varchar(40);not null"`
-	CreatedAt time.Time `gorm:"type:timestamp;default:CURRENT_TIMESTAMP;index:created_at;not null"`
+	CreatedAt time.Time `gorm:"->;type:timestamp;default:CURRENT_TIMESTAMP;index:created_at;not null"`
 }
 
 func (m Club) TableName() string {

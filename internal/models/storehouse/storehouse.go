@@ -15,7 +15,7 @@ type Storehouse struct {
 	Name      string        `gorm:"type:varchar(40);not null"`
 	Phone     types.Phone   `gorm:"not null"`
 	Address   types.Address `gorm:"not null"`
-	CreatedAt time.Time     `gorm:"type:timestamp;default:CURRENT_TIMESTAMP;index:created_at;not null"`
+	CreatedAt time.Time     `gorm:"->;type:timestamp;default:CURRENT_TIMESTAMP;index:created_at;not null"`
 }
 
 func (m Storehouse) TableName() string {

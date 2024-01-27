@@ -15,7 +15,7 @@ type Rank struct {
 	Name       string           `gorm:"type:varchar(40);not null"`
 	Conditions types.Conditions `gorm:"type:json;not null"`
 	Priority   int32            `gorm:"type:tinyint;not null"`
-	CreatedAt  time.Time        `gorm:"type:timestamp;default:CURRENT_TIMESTAMP;index:created_at;not null"`
+	CreatedAt  time.Time        `gorm:"->;type:timestamp;default:CURRENT_TIMESTAMP;index:created_at;not null"`
 }
 
 func (Rank) TableName() string {

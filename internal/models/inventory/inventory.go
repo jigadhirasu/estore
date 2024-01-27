@@ -14,7 +14,7 @@ type Inventory struct {
 	OrderID   string    `gorm:"type:varchar(40);not null"`
 	Sku       string    `gorm:"type:varchar(127);not null"`
 	Quantity  int32     `gorm:"type:tinyint;not null"`
-	CreatedAt time.Time `gorm:"type:timestamp;default:CURRENT_TIMESTAMP;index:created_at;not null"`
+	CreatedAt time.Time `gorm:"->;type:timestamp;default:CURRENT_TIMESTAMP;index:created_at;not null"`
 }
 
 func (m Inventory) TableName() string {

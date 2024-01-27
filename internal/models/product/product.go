@@ -19,7 +19,7 @@ type Product struct {
 	Label       types.Label     `gorm:"type:json;not null"`
 	SEO         types.SEO       `gorm:"type:json;not null"`
 	OpenGraph   types.OpenGraph `gorm:"type:json;not null"`
-	CreatedAt   string          `gorm:"type:timestamp;default:CURRENT_TIMESTAMP;index:created_at;not null"`
+	CreatedAt   string          `gorm:"->;type:timestamp;default:CURRENT_TIMESTAMP;index:created_at;not null"`
 }
 
 func (m Product) TableName() string {

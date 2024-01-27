@@ -12,7 +12,7 @@ type Category struct {
 	BusinessID string `gorm:"type:varchar(40);index:business_id;not null"`
 	ClubID     string `gorm:"type:varchar(40);index:club_id;not null"`
 	StoreID    string `gorm:"type:varchar(40);index:store_id;not null"`
-	CreatedAt  string `gorm:"type:timestamp;default:CURRENT_TIMESTAMP;index:created_at;not null"`
+	CreatedAt  string `gorm:"->;type:timestamp;default:CURRENT_TIMESTAMP;index:created_at;not null"`
 }
 
 func (m Category) TableName() string {
