@@ -3,13 +3,12 @@ package v1
 import (
 	"context"
 	"estore/internal/club"
+	"estore/internal/customer"
 	"estore/internal/mariadb"
 	"estore/internal/rank"
 	"estore/protoc/clubpb"
 
 	"github.com/jigadhirasu/rex"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 type ClubService struct {
@@ -145,7 +144,7 @@ func (ClubService) FindRank(cin context.Context, req *clubpb.FindRankRequest) (*
 
 	pipe := rex.Pipe2(
 		rex.Once(mariadb.F0GetDB[*clubpb.FindRankRequest](dbname)),
-		rank.PipeFindClub(mariadb.DBKey(dbname)),
+		rank.PipeFindRank(mariadb.DBKey(dbname)),
 	)(rex.From(req))(ctx)
 
 	defer mariadb.Rollback(ctx, dbname)
@@ -155,14 +154,57 @@ func (ClubService) FindRank(cin context.Context, req *clubpb.FindRankRequest) (*
 	return item()
 }
 
-func (ClubService) CreateCustomer(ctx context.Context, req *clubpb.CreateCustomerRequest) (*clubpb.CreateCustomerResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateCustomer not implemented")
+func (ClubService) CreateCustomer(cin context.Context, req *clubpb.CreateCustomerRequest) (*clubpb.CreateCustomerResponse, error) {
+	dbname := "test"
+
+	ctx := rex.NewContext(cin)
+
+	pipe := rex.Pipe4(
+		rex.Once(mariadb.F0GetDB[*clubpb.Customer](dbname)),
+		rex.Once(mariadb.F0Begin[*clubpb.Customer](dbname)),
+		customer.PipeCreateCustomer(mariadb.TxKey(dbname)),
+		rex.Tap(mariadb.F0Commit[*clubpb.CreateCustomerResponse](dbname)),
+	)(rex.From(req.Data...))(ctx)
+
+	defer mariadb.Rollback(ctx, dbname)
+
+	item := <-pipe()
+
+	return item()
 }
 
-func (ClubService) UpdateCustomer(ctx context.Context, req *clubpb.UpdateCustomerRequest) (*clubpb.UpdateCustomerResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateCustomer not implemented")
+func (ClubService) UpdateCustomer(cin context.Context, req *clubpb.UpdateCustomerRequest) (*clubpb.UpdateCustomerResponse, error) {
+	dbname := "test"
+
+	ctx := rex.NewContext(cin)
+
+	pipe := rex.Pipe4(
+		rex.Once(mariadb.F0GetDB[*clubpb.Customer](dbname)),
+		rex.Once(mariadb.F0Begin[*clubpb.Customer](dbname)),
+		customer.PipeUpdateCustomer(mariadb.TxKey(dbname)),
+		rex.Tap(mariadb.F0Commit[*clubpb.UpdateCustomerResponse](dbname)),
+	)(rex.From(req.Data...))(ctx)
+
+	defer mariadb.Rollback(ctx, dbname)
+
+	item := <-pipe()
+
+	return item()
 }
 
-func (ClubService) FindCustomer(ctx context.Context, req *clubpb.FindCustomerRequest) (*clubpb.FindCustomerResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method FindCustomer not implemented")
+func (ClubService) FindCustomer(cin context.Context, req *clubpb.FindCustomerRequest) (*clubpb.FindCustomerResponse, error) {
+	dbname := "test"
+
+	ctx := rex.NewContext(cin)
+
+	pipe := rex.Pipe2(
+		rex.Once(mariadb.F0GetDB[*clubpb.FindCustomerRequest](dbname)),
+		customer.PipeFindCustomer(mariadb.DBKey(dbname)),
+	)(rex.From(req))(ctx)
+
+	defer mariadb.Rollback(ctx, dbname)
+
+	item := <-pipe()
+
+	return item()
 }

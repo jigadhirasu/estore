@@ -1,8 +1,8 @@
-package rank
+package customer
 
 import (
 	"estore/internal/mariadb"
-	"estore/internal/models/rank"
+	"estore/internal/models/customer"
 	"estore/internal/util"
 	"estore/protoc/clubpb"
 
@@ -11,21 +11,21 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-func PipeFindRank(dbKey string, clauses ...clause.Expression) rex.PipeLine[*clubpb.FindRankRequest, *clubpb.FindRankResponse] {
+func PipeFindCustomer(dbKey string, clauses ...clause.Expression) rex.PipeLine[*clubpb.FindCustomerRequest, *clubpb.FindCustomerResponse] {
 	return rex.Pipe5(
 		rex.Map(T1BuildFindCondition),
-		rex.MergeMap(mariadb.H1Find[rank.Rank](dbKey)),
+		rex.MergeMap(mariadb.H1Find[customer.Customer](dbKey)),
 		rex.Map(F1ModelToProto),
-		rex.ReduceSlice[*clubpb.Rank](),
-		rex.Map[[]*clubpb.Rank, *clubpb.FindRankResponse](func(ctx rex.Context, a []*clubpb.Rank) (*clubpb.FindRankResponse, error) {
-			return &clubpb.FindRankResponse{
+		rex.ReduceSlice[*clubpb.Customer](),
+		rex.Map(func(ctx rex.Context, a []*clubpb.Customer) (*clubpb.FindCustomerResponse, error) {
+			return &clubpb.FindCustomerResponse{
 				Data: a,
 			}, nil
 		}),
 	)
 }
 
-func T1BuildFindCondition(ctx rex.Context, req *clubpb.FindRankRequest) ([]clause.Expression, error) {
+func T1BuildFindCondition(ctx rex.Context, req *clubpb.FindCustomerRequest) ([]clause.Expression, error) {
 
 	expression := []clause.Expression{}
 
@@ -47,13 +47,6 @@ func T1BuildFindCondition(ctx rex.Context, req *clubpb.FindRankRequest) ([]claus
 		expression = append(expression, clause.Like{
 			Column: "name",
 			Value:  req.LikeName,
-		})
-	}
-
-	if len(req.Priority) > 0 {
-		expression = append(expression, clause.IN{
-			Column: "priority",
-			Values: array.Map[int32, any](func(a int32) any { return a })(req.Priority),
 		})
 	}
 

@@ -5,6 +5,7 @@ import (
 	"estore/configs"
 	"estore/internal/mariadb"
 	"estore/internal/models/club"
+	"estore/internal/models/customer"
 	"estore/internal/models/filemap"
 	"estore/internal/models/rank"
 
@@ -14,6 +15,7 @@ import (
 var autoMigrateTable = []mariadb.Table{
 	&club.Club{},
 	&rank.Rank{},
+	&customer.Customer{},
 	&filemap.FileMap{},
 	filemap.FileStore{},
 }

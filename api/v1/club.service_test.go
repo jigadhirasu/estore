@@ -2,6 +2,8 @@ package v1
 
 import (
 	"context"
+	"estore/internal/mariadb"
+	"estore/internal/models/customer"
 	"estore/protoc/clubpb"
 	"estore/protoc/typepb"
 	"slices"
@@ -9,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/IBM/fp-go/array"
+	"github.com/jigadhirasu/rex"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -172,4 +175,63 @@ func TestRankCreateFindUpdateDelete(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.Equal(t, int32(4), resp5.Response.AffectedRows)
+}
+
+func testCustomerData(clubID, rankID string) []*clubpb.Customer {
+	return []*clubpb.Customer{
+		{Name: "三角形", ClubId: clubID, RankId: rankID, Label: map[string]string{"a": "b"}},
+		{Name: "正方形", ClubId: clubID, RankId: rankID, Label: map[string]string{"a": "b"}},
+		{Name: "橢圓形", ClubId: clubID, RankId: rankID, Label: map[string]string{"a": "b"}},
+		{Name: "你好呀", ClubId: clubID, RankId: rankID, Label: map[string]string{"a": "b"}},
+	}
+}
+
+func TestCustomerCRUD(t *testing.T) {
+	service := ClubService{}
+
+	resp2, err := service.CreateCustomer(context.TODO(), &clubpb.CreateCustomerRequest{
+		Data: testCustomerData("clubID", "rankID"),
+	})
+
+	assert.NoError(t, err)
+
+	assert.Equal(t, int32(4), resp2.Response.AffectedRows)
+
+	resp3, err := service.FindCustomer(context.TODO(), &clubpb.FindCustomerRequest{
+		Request: &typepb.Request{
+			OrderBy: []*typepb.OrderBy{
+				{Field: "name", Order: typepb.Order_DESC},
+			},
+		},
+	})
+
+	assert.NoError(t, err)
+
+	assert.Equal(t, 4, len(resp3.Data))
+
+	for i, d := range resp3.Data {
+		if i == 2 {
+			break
+		}
+
+		d.Name = d.Name + "1"
+	}
+
+	resp4, err := service.UpdateCustomer(context.TODO(), &clubpb.UpdateCustomerRequest{
+		Data: resp3.Data,
+	})
+
+	assert.NoError(t, err)
+
+	assert.Equal(t, int32(2), resp4.Response.AffectedRows)
+
+	ctx := rex.NewContext(context.Background())
+	db, err := mariadb.GetDB(ctx, "test")
+	assert.NoError(t, err)
+	tx := db.Delete(&customer.Customer{}, "uuid in ?", array.Map(
+		func(a *clubpb.Customer) string { return a.Id },
+	)(resp3.Data))
+
+	assert.Equal(t, int64(4), tx.RowsAffected)
+
 }
