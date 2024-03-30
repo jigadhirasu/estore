@@ -267,8 +267,8 @@ github.com/improbable-eng/grpc-web v0.15.0 h1:BN+7z6uNXZ1tQGcNAuaU1YjsLTApzkjt2t
 github.com/improbable-eng/grpc-web v0.15.0/go.mod h1:1sy9HKV4Jt9aEs9JSnkWlRJPuPtwNr0l57L4f878wP8=
 github.com/inconshreveable/mousetrap v1.0.0/go.mod h1:PxqpIevigyE2G7u3NXJIT2ANytuPF1OarO4DADm73n8=
 github.com/influxdata/influxdb1-client v0.0.0-20191209144304-8bf82d3c094d/go.mod h1:qj24IKcXYK6Iy9ceXlo3Tc+vtHo9lIhSX5JddghvEPo=
-github.com/jigadhirasu/rex v0.0.12 h1:sh24Fy8u4dd9antuTT895d3NYvOAF3NOF7ko4kGIxnM=
-github.com/jigadhirasu/rex v0.0.12/go.mod h1:dKWQm5d41hKR+PpmO2V5Ks/D/TeC+oU3oCKqwNPqYZI=
+github.com/jigadhirasu/rex v0.0.13 h1:k4dPpXBQeANCvXT2GMIK+5AyLH+F1ddrS5nlnMVdNAc=
+github.com/jigadhirasu/rex v0.0.13/go.mod h1:dKWQm5d41hKR+PpmO2V5Ks/D/TeC+oU3oCKqwNPqYZI=
 github.com/jinzhu/inflection v1.0.0 h1:K317FqzuhWc8YvSVlFMCCUb36O/S9MCKRDI7QkRKD/E=
 github.com/jinzhu/inflection v1.0.0/go.mod h1:h+uFLlag+Qp1Va5pdKtLDYj+kHp5pxUVkryuEj+Srlc=
 github.com/jinzhu/now v1.1.5 h1:/o9tlHleP7gOFmsnYNz3RGnqzefHA47wQpKrrdTIwXQ=

@@ -13,8 +13,10 @@ type StockService struct {
 }
 
 func (StockService) Ping(ctx context.Context, req *stockpb.PingPong) (*stockpb.PingPong, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
+	req.Message = "Pong"
+	return req, nil
 }
+
 func (StockService) CreateCommodity(ctx context.Context, req *stockpb.CreateCommodityRequest) (*stockpb.CreateCommodityResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateCommodity not implemented")
 }
