@@ -12,6 +12,7 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/open-policy-agent/opa v0.53.0
 	github.com/vincent-petithory/dataurl v1.0.0
+	go.elastic.co/apm/module/apmgin/v2 v2.5.0
 	go.uber.org/zap v1.24.0
 	google.golang.org/grpc v1.59.0
 	google.golang.org/protobuf v1.31.0
@@ -20,9 +21,18 @@ require (
 )
 
 require (
+	github.com/armon/go-radix v1.0.0 // indirect
+	github.com/elastic/go-sysinfo v1.7.1 // indirect
+	github.com/elastic/go-windows v1.0.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
+	github.com/joeshaw/multierror v0.0.0-20140124173710-69b34d4ec901 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
+	go.elastic.co/apm/module/apmhttp/v2 v2.5.0 // indirect
+	go.elastic.co/apm/v2 v2.5.0 // indirect
+	go.elastic.co/fastjson v1.1.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20231030173426-d783a09b4405 // indirect
+	howett.net/plist v0.0.0-20181124034731-591f970eefbb // indirect
 )
 
 require (

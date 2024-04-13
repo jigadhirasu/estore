@@ -21,6 +21,7 @@ func GrpcWebProxy(gs *grpc.Server) gin.HandlerFunc {
 			ctx.Status(http.StatusOK)
 			// error會用grpc-status 及 grpc-status-details-bin 回傳
 			wrappedGrpc.ServeHTTP(ctx.Writer, ctx.Request)
+			ctx.Abort()
 			return
 		}
 

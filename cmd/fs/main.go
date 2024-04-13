@@ -17,11 +17,25 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"go.elastic.co/apm/module/apmgin/v2"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
 
 func init() {
+	os.Setenv("ELASTIC_APM_SERVICE_NAME", "estore")
+	os.Setenv("ELASTIC_APM_API_KEY", "")
+	os.Setenv("ELASTIC_APM_SERVER_URL", "http://localhost:8200")
+	os.Setenv("ELASTIC_APM_LOG_LEVEL", "debug")
+	os.Setenv("ELASTIC_APM_LOG_FILE", "stderr")
+
+	os.Setenv("ELASTIC_APM_TRANSACTION_SAMPLE_RATE", "1.0")
+	os.Setenv("ELASTIC_APM_CAPTURE_HEADERS", "true")
+	os.Setenv("ELASTIC_APM_CAPTURE_BODY", "all")
+	os.Setenv("ELASTIC_APM_EXIT_SPAN_MIN_DURATION", "1ms")
+	os.Setenv("ELASTIC_APM_SPAN_STACK_TRACE_MIN_DURATION", "1ms")
+	os.Setenv("ELASTIC_APM_METRICS_INTERVAL", "3s")
+
 	configs.Develop()
 }
 
@@ -44,6 +58,7 @@ func main() {
 func httpServer(gs *grpc.Server) {
 	router := gin.Default()
 	router.Use(
+		apmgin.Middleware(router),
 		middlewares.CORS(),
 		middlewares.GrpcWebProxy(gs),
 	)
@@ -69,7 +84,10 @@ func grpcServer() *grpc.Server {
 	// }
 
 	// gs := grpc.NewServer(grpc.Creds(creds))
-	gs := grpc.NewServer()
+	gs := grpc.NewServer(
+	// grpc.ChainUnaryInterceptor(apmgrpc.NewUnaryServerInterceptor()),
+	// grpc.ChainStreamInterceptor(apmgrpc.NewStreamServerInterceptor()),
+	)
 	fspb.RegisterFileSystemServer(gs, &api.FSService{})
 	reflection.Register(gs)
 
